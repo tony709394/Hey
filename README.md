@@ -1,11 +1,8 @@
 <p align="center"><img src="https://raw.githubusercontent.com/tony709394/Hey/main/Images/logo.png" align="center" width="175"></p>
-
 <h1 align="center">Hey</h1>
 
+Language: English | [中文简体](README_zh_cn.md)
 
-
-<center>
-English | [中文简体](README_zh_cn.md)</center>
 
 ## What is Hey ?
 
