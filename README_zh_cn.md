@@ -1,29 +1,29 @@
 <p align="center"><img src="https://raw.githubusercontent.com/tony709394/Hey/main/Images/logo.png" align="center" width="175"></p>
 <h1 align="center">Hey</h1>
 
-Language: English | [中文简体](README_zh_cn.md)
+Language: [English](README.md) | 中文简体
 
-## What is Hey ?
+## Hey 是什么 ?
 
-A lightweight HTTP request library for Godot. Request is as simple as Hey.
+Godot HTTP 请求库。请求就像打招呼一样简单。
 
-## Install
+## 安装
 
-> Godot 3.0+ is supported.
+> 支持 Godot 3.0+
 
-- Download this repository
+- 下载这个仓库
 
-- Copy the directory named Hey into your project
+- 复制 Hey 目录 至 你的项目目录
 
-- In the Godot editor, select "Project -> Project Settings -> AutoLoad"
+- 在 Godot 编辑器中，选择 "项目 -> 项目管理 -> 自动加载"
 
-- Add a script named Hey.gd
+- 添加脚本 Hey.gd
 
 <p align="center"><img src="https://raw.githubusercontent.com/tony709394/Hey/main/Images/autoload.png" align="center"></p>
 
-## Examples
+## 示例
 
-### (Global) Configuration and Interceptor
+### (全局) 配置、拦截器
 
 ```
 func _ready():
@@ -59,7 +59,7 @@ func finally_response_callback(res):
     print(res)
 ```
 
-### (Local) Request and response
+### (局部) 请求、响应
 
 ```
 func get_something():
@@ -84,13 +84,13 @@ func finally_callback(res):
 
 ### config
 
-- Description: (Optional) Configure the HTTP client.
+- 描述: (可选) 配置 HTTP 客户端。
 
-- Output: `Void`
+- 输出: `Void`
 
-- Input: `Dictionary`
+- 输入: `Dictionary`
 
-- Usage:
+- 用法:
 
 ```
 Hey.config({
@@ -104,17 +104,17 @@ Hey.config({
 })
 ```
 
-> Please refer to the [official documentation](https://docs.godotengine.org/en/stable/classes/class_httprequest.html) for all fields except the `base_url` field. Some fields do not support earlier versions.
+> 除了 `base_url` 字段，请参考 [官方文档](https://docs.godotengine.org/en/stable/classes/class_httprequest.html) 填写其他字段。部分字段不支持低版本。
 
 ### intercept
 
-- Description: (Optional) Set up global interceptors for requests and responses.
+- 描述: (可选) 设置全局的请求、响应拦截器。
 
-- Output: `Void`
+- 输出: `Void`
 
-- Input: `Dictionary`
+- 输入: `Dictionary`
 
-- Usage:
+- 用法:
 
 ```
 Hey.intercept({
@@ -130,17 +130,17 @@ Hey.intercept({
 })
 ```
 
-> The `node` field is required and its value is a node reference. When a request or response occurs, the interceptor invokes the callback function from that node.
+> `node` 字段是必填的，值为节点引用。当请求发起 或 响应完成时，拦截器将调用该节点的回调函数。
 
 ### GET | HEAD | POST | PUT | DELETE | OPTIONS | TRACE | CONNECT | PATCH | MAX
 
-- Description: Request the remote interface in some HTTP method.
+- 描述: 通过某种 HTTP 方法，调用服务端接口。
 
-- Output: `State`
+- 输出: `State`
 
-- Input: `Node, Dictionary`
+- 输入: `Node, Dictionary`
 
-- Usage:
+- 用法:
 
 ```
 Hey.GET(self, {
@@ -151,19 +151,19 @@ Hey.GET(self, {
 }).success("success_callback").fail("fail_callback").finally("finally_callback")
 ```
 
-> The `node` field is required and its value is a node reference. When a response occurs, the callback function is invoked from that node.
+> `node` 字段是必填的，值为节点引用。当响应完成时，调用该节点的回调函数。
 > 
-> For details about how to fill in the second parameter, see the [official documentation](https://docs.godotengine.org/en/stable/classes/class_httprequest.html).
+> 请依据 [官方文档](https://docs.godotengine.org/en/stable/classes/class_httprequest.html) 填写第二个参数。
 
 ### all
 
-- Description: Wait for all responses to complete.
+- 描述: 等待所有接口完成。
 
-- Output: `State`
+- 输出: `State`
 
-- Input: `Array`
+- 输入: `Array`
 
-- Usage:
+- 用法:
 
 ```
 var state1 = Hey.GET(self, {
@@ -180,4 +180,4 @@ Hey.all([
 ]).success("success_callback").fail("fail_callback").finally("finally_callback")
 ```
 
-> The argument is a `State` array.
+> 参数是 `State` 数组。
