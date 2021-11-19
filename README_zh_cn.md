@@ -1,7 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/tony709394/Hey/main/Images/logo.png" align="center" width="175"></p>
 <h1 align="center">Hey</h1>
 
-Language: [English](README.md) | 中文简体
+语言: [English](README.md) | 中文简体
 
 ## Hey 是什么 ?
 
