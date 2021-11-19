@@ -145,9 +145,9 @@ Hey.intercept({
 ```
 Hey.GET(self, {
     "url": "/v2/5185415ba171ea3a00704eed",
-    "headers": "/v2/5185415ba171ea3a00704eed",
-    "use_ssl": "/v2/5185415ba171ea3a00704eed",
-    "query": "/v2/5185415ba171ea3a00704eed",
+    "headers": [],
+    "use_ssl": false,
+    "query": "",
 }).success("success_callback").fail("fail_callback").finally("finally_callback")
 ```
 
