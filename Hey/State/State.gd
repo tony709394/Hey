@@ -5,6 +5,7 @@ var is_locked = false
 var error
 var result
 var source
+var http_request
 var callback_name = {
 	"success": null,
 	"fail": null,
@@ -12,8 +13,9 @@ var callback_name = {
 }
 
 
-func _init(source):
+func _init(source, http_request=null):
 	self.source = source
+	self.http_request = http_request
 
 
 # ================= register callback func name (begin) =================
@@ -33,3 +35,12 @@ func finally(name):
 	return self
 
 # ================= register callback func name (end) =================
+
+
+func _get_progress():
+	if self.http_request != null:
+		var http_request = self.http_request
+		var body_size = http_request.get_body_size()
+		var downloaded_size = http_request.get_downloaded_bytes()
+		var progress = float(downloaded_size) / body_size
+		return progress

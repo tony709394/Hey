@@ -1,4 +1,5 @@
 <p align="center"><img src="https://raw.githubusercontent.com/tony709394/Hey/main/Images/logo.png" align="center" width="175"></p>
+
 <h1 align="center">Hey</h1>
 
 Language: English | [中文简体](README_zh_cn.md)
@@ -6,6 +7,12 @@ Language: English | [中文简体](README_zh_cn.md)
 ## What is Hey ?
 
 A lightweight HTTP request library for Godot. Request is as simple as Hey.
+
+## Features
+
+- Multiple HTTP methods
+- Support for multiple response packaging
+- Support download and get download progress
 
 ## Install
 
@@ -181,3 +188,36 @@ Hey.all([
 ```
 
 > The argument is a `State` array.
+
+### download
+
+- Description: Using the GET method, request a file stream.
+
+- Output: `State`
+
+- Input: `Node, Dictionary`
+
+- Usage:
+
+```
+Hey.download(self, {
+    "url": "/v2/5185415ba171ea3a00704eed",
+    "headers": [],
+    "use_ssl": false,
+    "query": "",
+}).success("success_callback").fail("fail_callback").finally("finally_callback")
+```
+
+### get_download_progress
+
+- Description: Get download progress.
+
+- Output: `Float`
+
+- Input: `State`
+
+- Usage:
+
+```
+var progress_download = Hey.get_download_progress(state)
+```

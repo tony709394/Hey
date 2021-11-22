@@ -7,6 +7,14 @@
 
 Godot HTTP 请求库。请求就像打招呼一样简单。
 
+## 特性
+
+- 多种 HTTP 方法
+
+- 支持多个响应打包
+
+- 支持下载，并获取下载进度
+
 ## 安装
 
 > 支持 Godot 3.0+
@@ -181,3 +189,36 @@ Hey.all([
 ```
 
 > 参数是 `State` 数组。
+
+### download
+
+- 描述: 使用 GET 方法，请求文件流。
+
+- 输出: `State`
+
+- 输入: `Node, Dictionary`
+
+- 用法:
+
+```
+Hey.download(self, {
+    "url": "/v2/5185415ba171ea3a00704eed",
+    "headers": [],
+    "use_ssl": false,
+    "query": "",
+}).success("success_callback").fail("fail_callback").finally("finally_callback")
+```
+
+### get_download_progress
+
+- 描述: 获取下载进度。
+
+- 输出: `Float`
+
+- 输入: `State`
+
+- 用法:
+
+```
+var progress_download = Hey.get_download_progress(state)
+```

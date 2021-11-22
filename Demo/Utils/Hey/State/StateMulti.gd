@@ -8,6 +8,7 @@ var is_success_all = true
 
 
 func _init(parent_node, array_state).(array_state[0].source):
+	
 	self.parent_node = parent_node
 	for state in array_state:
 		state.is_locked = true
@@ -51,6 +52,7 @@ func _process(delta):
 			self.queue_free()
 			
 			for state in self.array_state:
+				state.http_request.queue_free()
 				state.queue_free()
 			
 			is_complete_all = true

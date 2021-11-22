@@ -14,8 +14,8 @@ var config_http_request = {
 var dict_http_request = {}
 
 
-func _process(delta):
-	remove_child_auto(5000)
+#func _process(delta):
+#	remove_child_auto(50000)
 
 
 # create dict with HTTPRequest
@@ -43,7 +43,7 @@ func create_request():
 
 
 # core of all HTTP methods 
-func request(node, method, params):
+func request(node, method, params, is_file=false):
 	var http_request = create_request()
 	
 	var id = http_request.id
@@ -53,10 +53,11 @@ func request(node, method, params):
 	var use_ssl = params.use_ssl if params.has("ssl_validate_domain") else true
 	var query = params.query if params.has("query") else ""
 	
+	headers.push_front("Is-File:%s" % is_file)
 	headers.push_front("Godot-Request-ID:%s" % id)
 	
 	var error = instance.request(url, headers, use_ssl, method, query)
-	var state = State.new(node)
+	var state = State.new(node, instance)
 	http_request.error = error
 	http_request.source = node
 	http_request.state = state
@@ -154,10 +155,34 @@ func intercept(params):
 		Interceptor.register_response_callback(response)
 
 
+func download(node, params):
+	return request(node, HTTPClient.METHOD_GET, params, true)
+
+
+func get_download_progress(state):
+	pass
+	var wr = weakref(state)
+	if wr.get_ref():
+		if (state is StateMulti) and (state.array_state != null):
+			var _progress = 0.0
+			for state_child in state.array_state:
+				var wr_state_child = weakref(state_child)
+				if wr_state_child.get_ref():
+					_progress = stepify((_progress + state_child._get_progress()) / state.array_state.size(), 0.01)
+			return _progress
+		else:
+			return state._get_progress()
+	else:
+		# completed
+		return 1.00
+
+
 func _on_request_completed(result, response_code, headers, body):
 	
 	var id = headers[0].split("Godot-Request-ID:")[1]
+	var isFile = bool(headers[1].split("Is-File:")[1])
 	headers.remove(0)
+	headers.remove(1)
 	var http_request = dict_http_request[id]
 	var state = http_request.state
 	var source = http_request.source
@@ -165,35 +190,17 @@ func _on_request_completed(result, response_code, headers, body):
 	var fail_callback_name = state.callback_name.fail
 	var finally_callback_name = state.callback_name.finally
 	
-#	Then need to add the MIME type
-#	MIME type list: https://blog.csdn.net/dodod2012/article/details/88868930
-	var content_type = "application/json"
-	var body_hex = body.hex_encode().to_upper()
-	var dict_content_type = {
-		"FFD8FF": "image/jpg",
-		"89504E47": "image/png",
-		"47494638": "image/gif",
-		"49492A00": "image/tiff",
-		"424D": "image/bmp",
-		"57415645": "audio/x-wav",
-	}
-	for key in dict_content_type:
-		if body_hex.find(key) == 0:
-			content_type = dict_content_type[key]
-			break
-	
 	var res = {
 		"code": response_code,
 		"body": null,
-		"headers": headers,
-		"content_type": content_type
+		"headers": headers
 	}
 	
-	if content_type.find("application/json") == 0:
+	if isFile:
+		res.body = body
+	else:
 		if body.get_string_from_utf8() != null:
 			res.body = JSON.parse(body.get_string_from_utf8()).result
-	else:
-		res.body = body
 	
 	# ================= call callback func (begin) =================
 	
@@ -226,24 +233,24 @@ func free_node(id):
 	var item = dict_http_request[id]
 	var http_request = item.instance
 	var state = item.state
-	http_request.queue_free()
 	dict_http_request.erase(id)
 	
 	if not state.is_locked:
 		state.queue_free()
+		http_request.queue_free()
 
 
 # Help cancel_request() remove the node
 # because cancel_request() releases only instances but does not remove nodes
-func remove_child_auto(millisecond):
-	
-	for key in dict_http_request:
-		var http_request = dict_http_request[key]
-		var instance = dict_http_request[key].instance
-		var state = dict_http_request[key].state
-		var id = dict_http_request[key].id
-		var current_timestamp = OS.get_system_time_msecs()
-		var destroy_timestamp = http_request.create_timestamp + millisecond
-		if current_timestamp >= destroy_timestamp:
-			self.remove_child(instance)
-			dict_http_request.erase(id)
+#func remove_child_auto(millisecond):
+#
+#	for key in dict_http_request:
+#		var http_request = dict_http_request[key]
+#		var instance = dict_http_request[key].instance
+#		var state = dict_http_request[key].state
+#		var id = dict_http_request[key].id
+#		var current_timestamp = OS.get_system_time_msecs()
+#		var destroy_timestamp = http_request.create_timestamp + millisecond
+#		if current_timestamp >= destroy_timestamp:
+#			self.remove_child(instance)
+#			dict_http_request.erase(id)
