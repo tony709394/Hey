@@ -19,15 +19,18 @@ var dict_http_request = {}
 
 
 # create dict with HTTPRequest
-func create_request():
+func create_request(meta):
 	var http_request = HTTPRequest.new()
+	var id = StringTool.generate_random_string(16)
+	var is_file = meta.is_file if meta.has("is_file") else false
+	var _meta = [id, is_file]
+	
 	if config_http_request.official != null:
 		for key in config_http_request.official:
 			http_request[key] = config_http_request.official[key]
 	self.add_child(http_request)
-	http_request.connect("request_completed", self, "_on_request_completed")
+	http_request.connect("request_completed", self, "_on_request_completed", _meta)
 	
-	var id = StringTool.generate_random_string(16)
 	var res = {
 		"error": 0,
 		"id": id,
@@ -36,7 +39,6 @@ func create_request():
 		"source": null,
 		"state": null,
 	}
-	
 	dict_http_request[id] = res
 	
 	return res
@@ -44,7 +46,9 @@ func create_request():
 
 # core of all HTTP methods 
 func request(node, method, params, is_file=false):
-	var http_request = create_request()
+	var http_request = create_request({
+		"is_file": is_file,
+	})
 	
 	var id = http_request.id
 	var instance = http_request.instance
@@ -52,9 +56,6 @@ func request(node, method, params, is_file=false):
 	var headers = params.headers if params.has("headers") else []
 	var use_ssl = params.use_ssl if params.has("ssl_validate_domain") else true
 	var query = params.query if params.has("query") else ""
-	
-	headers.push_front("Is-File:%s" % is_file)
-	headers.push_front("Godot-Request-ID:%s" % id)
 	
 	var error = instance.request(url, headers, use_ssl, method, query)
 	var state = State.new(node, instance)
@@ -177,12 +178,7 @@ func get_download_progress(state):
 		return 1.00
 
 
-func _on_request_completed(result, response_code, headers, body):
-	
-	var id = headers[0].split("Godot-Request-ID:")[1]
-	var isFile = bool(headers[1].split("Is-File:")[1])
-	headers.remove(0)
-	headers.remove(1)
+func _on_request_completed(result, response_code, headers, body, id, is_file):
 	var http_request = dict_http_request[id]
 	var state = http_request.state
 	var source = http_request.source
@@ -196,7 +192,7 @@ func _on_request_completed(result, response_code, headers, body):
 		"headers": headers
 	}
 	
-	if isFile:
+	if is_file:
 		res.body = body
 	else:
 		if body.get_string_from_utf8() != null:
